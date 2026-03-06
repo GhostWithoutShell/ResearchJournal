@@ -1,0 +1,102 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import StatusBadge from '../../components/astro/StatusBadge.astro';
+import DnaFingerprint from '../../components/react/DnaFingerprint';
+import ConnectionManager from '../../components/react/ConnectionManager';
+import ideasData from '../../data/ideas.json';
+import connectionsData from '../../data/connections.json';
+import type { Connection } from '../../lib/schemas';
+
+export function getStaticPaths() {
+  return ideasData.map((idea: any) => ({
+    params: { id: idea.id },
+  }));
+}
+
+const { id } = Astro.params;
+const idea = ideasData.find((i: any) => i.id === id);
+
+if (!idea) {
+  return Astro.redirect('/');
+}
+
+const connections = connectionsData as Connection[];
+const ideaTitles: Record<string, string> = {};
+ideasData.forEach((i: any) => { ideaTitles[i.id] = i.title; });
+---
+<BaseLayout title={`${idea.title} — Research Journal`}>
+  <div class="idea-detail">
+    <div style="margin-bottom: var(--spacing-lg);">
+      <a href="/" class="btn btn--ghost" style="font-size: 0.75rem;">
+        &lt; back to library
+      </a>
+    </div>
+
+    <div class="idea-detail-header">
+      <div class="idea-detail-dna">
+        <DnaFingerprint client:load embedding={idea.embedding} size={400} />
+      </div>
+      <div class="idea-detail-info">
+        <h1 class="idea-detail-title">{idea.title}</h1>
+        <div class="idea-detail-meta">
+          <StatusBadge status={idea.status} />
+          <span style="font-size: 0.75rem; color: var(--color-muted);">
+            created {new Date(idea.createdAt).toLocaleDateString()}
+          </span>
+          <span style="font-size: 0.75rem; color: var(--color-muted);">
+            updated {new Date(idea.updatedAt).toLocaleDateString()}
+          </span>
+        </div>
+        <div class="tag-list" style="margin-bottom: var(--spacing-md);">
+          {idea.tags.map((tag: string) => (
+            <span class="tag">{tag}</span>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <div class="idea-detail-section">
+      <h3>Description</h3>
+      <p class="idea-detail-description">{idea.description}</p>
+    </div>
+
+    {idea.results && (
+      <div class="idea-detail-section">
+        <h3>Results</h3>
+        <p style="font-size: 0.875rem; line-height: 1.7; color: var(--color-accent);">{idea.results}</p>
+      </div>
+    )}
+
+    {idea.repoLink && (
+      <div class="idea-detail-section">
+        <h3>Repository</h3>
+        <a href={idea.repoLink} target="_blank" rel="noopener noreferrer" style="font-size: 0.875rem;">
+          {idea.repoLink}
+        </a>
+      </div>
+    )}
+
+    <div class="idea-detail-section">
+      <h3>Connections</h3>
+      <ConnectionManager
+        client:load
+        connections={connections}
+        currentIdeaId={idea.id}
+        ideaTitles={ideaTitles}
+      />
+    </div>
+
+    <div class="idea-detail-section">
+      <h3>Find Similar</h3>
+      <p style="font-size: 0.8125rem; color: var(--color-muted); font-style: italic;">
+        Similarity search will use cosine similarity on embeddings. Coming soon.
+      </p>
+    </div>
+
+    <div style="margin-top: var(--spacing-xl); padding-top: var(--spacing-lg); border-top: 1px solid var(--color-border);">
+      <a href="/" class="btn btn--ghost" style="font-size: 0.8125rem;">
+        &lt; back to library
+      </a>
+    </div>
+  </div>
+</BaseLayout>

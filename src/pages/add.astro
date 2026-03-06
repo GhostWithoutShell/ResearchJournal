@@ -1,0 +1,11 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import AddEditIdeaForm from '../components/react/AddEditIdeaForm';
+---
+<BaseLayout title="Add Idea — Research Journal">
+  <div class="page-header">
+    <h1 class="page-title">&gt; new idea_</h1>
+    <p class="page-subtitle">Record a new idea. It will be saved as a draft in your browser.</p>
+  </div>
+  <AddEditIdeaForm client:load />
+</BaseLayout>

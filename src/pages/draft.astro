@@ -1,0 +1,13 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import DraftIdeaDetail from '../components/react/DraftIdeaDetail';
+import ideasData from '../data/ideas.json';
+import type { Idea } from '../lib/schemas';
+
+const ideas = ideasData as Idea[];
+---
+<BaseLayout title="Draft Idea — Research Journal">
+  <div id="draft-root">
+    <DraftIdeaDetail client:only="react" ideaId="" buildTimeIdeas={ideas} />
+  </div>
+</BaseLayout>

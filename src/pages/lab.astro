@@ -1,0 +1,13 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import LabPage from '../components/react/LabPage';
+import ideasData from '../data/ideas.json';
+import vocabularyData from '../data/vocabulary.json';
+import type { Idea, ConceptEntry } from '../lib/schemas';
+
+const ideas = ideasData as Idea[];
+const vocabulary = vocabularyData as ConceptEntry[];
+---
+<BaseLayout title="Genetics Lab — Research Journal">
+  <LabPage client:only="react" ideas={ideas} vocabulary={vocabulary} />
+</BaseLayout>

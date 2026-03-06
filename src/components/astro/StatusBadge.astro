@@ -1,0 +1,18 @@
+---
+interface Props {
+  status: 'idea' | 'in-progress' | 'done' | 'killed' | 'draft';
+}
+
+const { status } = Astro.props;
+
+const statusLabels: Record<string, string> = {
+  'idea': 'idea',
+  'in-progress': 'in progress',
+  'done': 'done',
+  'killed': 'killed',
+  'draft': 'draft',
+};
+---
+<span class:list={['badge', `badge--${status}`]}>
+  {statusLabels[status] || status}
+</span>

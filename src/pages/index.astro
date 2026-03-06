@@ -1,0 +1,15 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import IdeaLibrary from '../components/react/IdeaLibrary';
+import ideasData from '../data/ideas.json';
+
+// Split: light data for props, embeddings separate
+const ideasLight = ideasData.map(({ embedding, ...rest }: any) => rest);
+const embeddings: Record<string, number[]> = {};
+ideasData.forEach((idea: any) => {
+  embeddings[idea.id] = idea.embedding;
+});
+---
+<BaseLayout title="Research Journal — Library">
+  <IdeaLibrary client:load ideas={ideasLight} embeddings={embeddings} />
+</BaseLayout>

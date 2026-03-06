@@ -1,0 +1,26 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import IdeaGraph from '../components/react/IdeaGraph';
+import ideasData from '../data/ideas.json';
+import connectionsData from '../data/connections.json';
+import type { Connection } from '../lib/schemas';
+
+// Strip embeddings for graph — only need id, title, status
+const ideasLight = ideasData.map(({ embedding, ...rest }: any) => ({
+  ...rest,
+  embedding: [],
+}));
+const buildTimeIds = ideasData.map((i: any) => i.id);
+---
+<BaseLayout title="Idea Graph — Research Journal">
+  <div class="page-header">
+    <h1 class="page-title">Idea Graph</h1>
+    <p class="page-subtitle">Visualize connections between ideas. Drag nodes to rearrange. Click to navigate.</p>
+  </div>
+  <IdeaGraph
+    client:only="react"
+    ideas={ideasLight}
+    connections={connectionsData as Connection[]}
+    buildTimeIds={buildTimeIds}
+  />
+</BaseLayout>

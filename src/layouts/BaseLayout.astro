@@ -1,0 +1,27 @@
+---
+import Header from '../components/astro/Header.astro';
+import '../styles/global.css';
+import '../styles/journal.css';
+
+interface Props {
+  title?: string;
+}
+
+const { title = 'Research Journal' } = Astro.props;
+---
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Personal idea library — research journal for tracking, visualizing, and connecting ideas." />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <Header />
+    <main class="container" style="padding-top: var(--spacing-xl); padding-bottom: var(--spacing-2xl);">
+      <slot />
+    </main>
+  </body>
+</html>

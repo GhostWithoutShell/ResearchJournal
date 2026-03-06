@@ -1,0 +1,100 @@
+---
+const currentPath = Astro.url.pathname;
+
+const navLinks = [
+  { href: '/', label: 'library' },
+  { href: '/add', label: '+ add' },
+  { href: '/lab', label: 'lab' },
+  { href: '/graph', label: 'graph' },
+];
+---
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="/" class="header-title">
+      <span class="header-prompt">&gt;</span> RESEARCH JOURNAL<span class="header-cursor">_</span>
+    </a>
+    <nav class="header-nav">
+      {navLinks.map((link) => (
+        <a
+          href={link.href}
+          class:list={['header-link', { active: currentPath === link.href || (link.href !== '/' && currentPath.startsWith(link.href)) }]}
+        >
+          [{link.label}]
+        </a>
+      ))}
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    border-bottom: 1px solid var(--color-border);
+    padding: var(--spacing-md) 0;
+    background: var(--color-surface);
+  }
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-lg);
+  }
+
+  .header-title {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-ink);
+    text-decoration: none;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+  }
+
+  .header-title:hover {
+    color: var(--color-accent);
+    text-decoration: none;
+  }
+
+  .header-prompt {
+    color: var(--color-accent);
+  }
+
+  .header-cursor {
+    animation: blink 1s step-end infinite;
+    color: var(--color-accent);
+  }
+
+  @keyframes blink {
+    50% { opacity: 0; }
+  }
+
+  .header-nav {
+    display: flex;
+    gap: var(--spacing-md);
+  }
+
+  .header-link {
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    color: var(--color-muted);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .header-link:hover {
+    color: var(--color-text);
+    text-decoration: none;
+  }
+
+  .header-link.active {
+    color: var(--color-accent);
+  }
+
+  @media (max-width: 600px) {
+    .header-inner {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--spacing-sm);
+    }
+  }
+</style>

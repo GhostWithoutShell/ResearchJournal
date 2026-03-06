@@ -22,5 +22,9 @@ Desktop.ini
 *.swp
 *.swo
 
+# Playwright
+playwright-report/
+test-results/
+
 # Logs
 npm-debug.log*

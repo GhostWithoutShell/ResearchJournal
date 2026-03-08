@@ -33,6 +33,16 @@ export default function LabPage({ ideas, vocabulary }: Props) {
     loadLab();
   }, [ideas]);
 
+  // Pre-select parents from URL params (e.g. navigating from graph breed mode)
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const params = new URLSearchParams(window.location.search);
+    const pA = params.get('parentA');
+    const pB = params.get('parentB');
+    if (pA) setParentAId(pA);
+    if (pB) setParentBId(pB);
+  }, []);
+
   const parentA = useMemo(() => allIdeas.find((i) => i.id === parentAId), [allIdeas, parentAId]);
   const parentB = useMemo(() => allIdeas.find((i) => i.id === parentBId), [allIdeas, parentBId]);
 

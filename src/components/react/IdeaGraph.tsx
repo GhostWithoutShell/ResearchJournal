@@ -38,6 +38,13 @@ export default function IdeaGraph({ ideas, connections, buildTimeIds }: Props) {
   const [tooltip, setTooltip] = useState<{ x: number; y: number; text: string } | null>(null);
   const simulationRef = useRef<any>(null);
 
+  const [breedMode, setBreedMode] = useState(false);
+  const [breedParentA, setBreedParentA] = useState<string | null>(null);
+  const breedModeRef = useRef(breedMode);
+  const breedParentARef = useRef(breedParentA);
+  useEffect(() => { breedModeRef.current = breedMode; }, [breedMode]);
+  useEffect(() => { breedParentARef.current = breedParentA; }, [breedParentA]);
+
   useEffect(() => {
     const svg = svgRef.current;
     if (!svg) return;
@@ -168,6 +175,14 @@ export default function IdeaGraph({ ideas, connections, buildTimeIds }: Props) {
           d3Module!.select(this).select('circle').attr('stroke-width', 2);
         })
         .on('click', (_event: any, d: any) => {
+          if (breedModeRef.current) {
+            if (!breedParentARef.current) {
+              setBreedParentA(d.id);
+            } else if (d.id !== breedParentARef.current) {
+              window.location.href = `/lab?parentA=${breedParentARef.current}&parentB=${d.id}`;
+            }
+            return;
+          }
           if (staticIds.has(d.id)) {
             window.location.href = `/idea/${d.id}`;
           }
@@ -218,8 +233,34 @@ export default function IdeaGraph({ ideas, connections, buildTimeIds }: Props) {
     };
   }, [ideas, connections]);
 
+  // Highlight breed parent A node when selected
+  useEffect(() => {
+    const svg = svgRef.current;
+    if (!svg) return;
+    import('d3').then((d3) => {
+      d3.select(svg)
+        .selectAll<SVGGElement, GraphNode>('g > g')
+        .select('circle')
+        .attr('stroke', (d: any) => {
+          if (breedMode && breedParentA === d.id) return '#ffcc00';
+          return STATUS_COLORS[d.status] || '#33cc33';
+        })
+        .attr('stroke-width', (d: any) => {
+          if (breedMode && breedParentA === d.id) return 3;
+          return 2;
+        });
+    });
+  }, [breedMode, breedParentA]);
+
   return (
-    <div className="graph-container">
+    <div className="graph-container" style={{ position: 'relative' }}>
+      <button
+        className={`btn btn--sm ${breedMode ? 'btn--primary' : 'btn--ghost'}`}
+        onClick={() => { setBreedMode(!breedMode); setBreedParentA(null); }}
+        style={{ position: 'absolute', top: 8, right: 8, zIndex: 10 }}
+      >
+        {breedMode ? (breedParentA ? 'select parent B...' : 'select parent A...') : 'breed mode'}
+      </button>
       <svg
         ref={svgRef}
         style={{ width: '100%', height: '100%' }}

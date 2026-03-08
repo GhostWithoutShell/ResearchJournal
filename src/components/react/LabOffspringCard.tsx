@@ -15,10 +15,12 @@ export default function LabOffspringCard({ offspring, parentA, parentB }: Props)
   const [promoting, setPromoting] = useState(false);
   const [title, setTitle] = useState(offspring.suggestedTitle || '');
   const [description, setDescription] = useState(offspring.suggestedDescription || '');
+  const [nextAction, setNextAction] = useState('');
 
   const handlePromote = () => {
-    if (!title.trim()) return;
-    const desc = description.trim() || offspring.decodedConcepts.join(', ');
+    if (!title.trim() || !nextAction.trim()) return;
+    const baseDesc = description.trim() || offspring.decodedConcepts.join(', ');
+    const desc = baseDesc + '\n\n**Next action:** ' + nextAction.trim();
     promoteToLibrary(offspring, title.trim(), desc, ['lab-offspring']);
     setPromoting(false);
   };
@@ -151,8 +153,16 @@ export default function LabOffspringCard({ offspring, parentA, parentB }: Props)
               onChange={(e) => setDescription(e.target.value)}
               style={{ minHeight: '60px', marginBottom: 'var(--spacing-sm)', fontSize: '0.8125rem' }}
             />
+            <input
+              type="text"
+              className="form-input"
+              placeholder="What can you do about this right now, in 1 hour?"
+              value={nextAction}
+              onChange={(e) => setNextAction(e.target.value)}
+              style={{ marginBottom: 'var(--spacing-sm)', fontSize: '0.8125rem' }}
+            />
             <div style={{ display: 'flex', gap: 'var(--spacing-sm)' }}>
-              <button className="btn btn--sm btn--primary" onClick={handlePromote}>
+              <button className="btn btn--sm btn--primary" onClick={handlePromote} disabled={!nextAction.trim()}>
                 &gt; save to library
               </button>
               <button className="btn btn--sm btn--ghost" onClick={() => setPromoting(false)}>

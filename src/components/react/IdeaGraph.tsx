@@ -1,5 +1,6 @@
 import { useRef, useEffect, useState } from 'react';
 import type { Idea, Connection } from '../../lib/schemas';
+import { loadConnections } from '../../stores/lab';
 
 interface Props {
   ideas: Idea[];
@@ -69,7 +70,10 @@ export default function IdeaGraph({ ideas, connections, buildTimeIds }: Props) {
 
       const nodeIds = new Set(nodes.map((n) => n.id));
 
-      const links: GraphLink[] = connections
+      const localConnections = loadConnections();
+      const allConnections = [...connections, ...localConnections];
+
+      const links: GraphLink[] = allConnections
         .filter((c) => nodeIds.has(c.sourceId) && nodeIds.has(c.targetId))
         .map((c) => ({
           source: c.sourceId,
@@ -108,11 +112,13 @@ export default function IdeaGraph({ ideas, connections, buildTimeIds }: Props) {
         .data(links)
         .enter()
         .append('line')
-        .attr('stroke', '#1a3a1a')
-        .attr('stroke-width', 1.5)
-        .attr('stroke-dasharray', (d: any) =>
-          d.label === 'related' ? '4,4' : 'none',
-        );
+        .attr('stroke', (d: any) => d.label === 'child-of' ? '#cc33ff' : '#1a3a1a')
+        .attr('stroke-width', (d: any) => d.label === 'child-of' ? 1 : 1.5)
+        .attr('stroke-dasharray', (d: any) => {
+          if (d.label === 'child-of') return '6,3';
+          if (d.label === 'related') return '4,4';
+          return 'none';
+        });
 
       // Link labels
       const linkLabel = svgSelection
@@ -122,7 +128,7 @@ export default function IdeaGraph({ ideas, connections, buildTimeIds }: Props) {
         .enter()
         .append('text')
         .text((d: any) => d.label)
-        .attr('fill', '#1a5c2a')
+        .attr('fill', (d: any) => d.label === 'child-of' ? '#9933cc' : '#1a5c2a')
         .attr('font-size', '9px')
         .attr('font-family', "'SF Mono', 'Cascadia Code', 'Fira Code', monospace")
         .attr('text-anchor', 'middle');

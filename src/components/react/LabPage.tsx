@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { useStore } from '@nanostores/react';
 import type { Idea, LabOffspring } from '../../lib/schemas';
 import { $allIdeas, initializeStore } from '../../stores/ideas';
-import { $labOffspring, loadLab, addOffspringBatch, clearLab } from '../../stores/lab';
+import { $labOffspring, loadLab, addOffspringBatch, clearLab, sortOffspringByFitness } from '../../stores/lab';
 import { generateOffspring } from '../../lib/genetics';
 import { loadVocabulary, decodeConcepts, generateOffspringText } from '../../lib/concept-vocabulary';
 import type { ConceptEntry } from '../../lib/schemas';
@@ -26,6 +26,7 @@ export default function LabPage({ ideas, vocabulary }: Props) {
   const [mutationStrength, setMutationStrength] = useState(0.05);
   const [count, setCount] = useState(4);
   const [breeding, setBreeding] = useState(false);
+  const [sortMode, setSortMode] = useState<'newest' | 'fitness'>('newest');
 
   useEffect(() => {
     initializeStore(ideas);
@@ -213,9 +214,43 @@ export default function LabPage({ ideas, vocabulary }: Props) {
             alignItems: 'center',
             marginBottom: 'var(--spacing-md)',
           }}>
-            <h2 style={{ fontSize: '1rem', color: 'var(--color-ink)' }}>
-              Offspring ({offspring.length})
-            </h2>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-md)' }}>
+              <h2 style={{ fontSize: '1rem', color: 'var(--color-ink)', margin: 0 }}>
+                Offspring ({offspring.length})
+              </h2>
+              <div style={{ display: 'flex', gap: '4px' }}>
+                <button
+                  style={{
+                    padding: '2px 8px',
+                    fontSize: '0.6875rem',
+                    fontFamily: 'inherit',
+                    border: '1px solid var(--color-border)',
+                    borderRadius: 'var(--radius)',
+                    cursor: 'pointer',
+                    background: sortMode === 'newest' ? 'var(--color-ink)' : 'transparent',
+                    color: sortMode === 'newest' ? 'var(--color-bg)' : 'var(--color-muted)',
+                  }}
+                  onClick={() => setSortMode('newest')}
+                >
+                  newest
+                </button>
+                <button
+                  style={{
+                    padding: '2px 8px',
+                    fontSize: '0.6875rem',
+                    fontFamily: 'inherit',
+                    border: '1px solid var(--color-border)',
+                    borderRadius: 'var(--radius)',
+                    cursor: 'pointer',
+                    background: sortMode === 'fitness' ? 'var(--color-ink)' : 'transparent',
+                    color: sortMode === 'fitness' ? 'var(--color-bg)' : 'var(--color-muted)',
+                  }}
+                  onClick={() => setSortMode('fitness')}
+                >
+                  fitness
+                </button>
+              </div>
+            </div>
             <button
               className="btn btn--sm btn--ghost"
               onClick={() => {
@@ -230,7 +265,7 @@ export default function LabPage({ ideas, vocabulary }: Props) {
           </div>
 
           <div className="idea-grid">
-            {offspring.slice().reverse().map((o) => (
+            {(sortMode === 'fitness' ? sortOffspringByFitness() : offspring.slice().reverse()).map((o) => (
               <LabOffspringCard
                 key={o.id}
                 offspring={o}

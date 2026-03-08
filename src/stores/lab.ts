@@ -2,6 +2,7 @@ import { atom } from 'nanostores';
 import type { LabOffspring } from '../lib/schemas';
 import { addDraft } from './ideas';
 import type { Idea } from '../lib/schemas';
+import { computeFitness } from '../lib/genetics';
 
 export const $labOffspring = atom<LabOffspring[]>([]);
 
@@ -100,4 +101,37 @@ export function promoteToLibrary(
 export function clearLab(): void {
   $labOffspring.set([]);
   saveLab();
+}
+
+/**
+ * Compute fitness scores for an offspring and return it with the fitness field populated.
+ * Does not mutate the original offspring or update the store — the caller decides what to do with the result.
+ */
+export function computeAndSetFitness(
+  offspring: LabOffspring,
+  parentAEmb: number[],
+  parentBEmb: number[],
+  allIdeaEmbeddings: number[][],
+): LabOffspring {
+  const fitness = computeFitness(
+    offspring.embedding,
+    parentAEmb,
+    parentBEmb,
+    allIdeaEmbeddings,
+    offspring.decodedConcepts,
+  );
+  return { ...offspring, fitness };
+}
+
+/**
+ * Return all lab offspring sorted by fitness.total descending.
+ * Offspring without a fitness score are placed at the end.
+ */
+export function sortOffspringByFitness(): LabOffspring[] {
+  const offspring = $labOffspring.get();
+  return [...offspring].sort((a, b) => {
+    const aScore = a.fitness?.total ?? -1;
+    const bScore = b.fitness?.total ?? -1;
+    return bScore - aScore;
+  });
 }

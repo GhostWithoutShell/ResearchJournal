@@ -100,6 +100,24 @@ export default function LabOffspringCard({ offspring, parentA, parentB }: Props)
         )}
       </div>
 
+      {offspring.fitness && (
+        <div className="fitness-scores">
+          <div className="fitness-label">Fitness</div>
+          {(['novelty', 'balance', 'coverage'] as const).map((metric) => (
+            <div className="fitness-row" key={metric}>
+              <span className="fitness-name">{metric}</span>
+              <div className="fitness-bar">
+                <div className="fitness-fill" style={{ width: `${(offspring.fitness![metric]) * 100}%` }} />
+              </div>
+              <span className="fitness-value">{offspring.fitness![metric].toFixed(2)}</span>
+            </div>
+          ))}
+          <div className="fitness-total">
+            total: {offspring.fitness.total.toFixed(2)}
+          </div>
+        </div>
+      )}
+
       {/* Actions */}
       <div style={{ display: 'flex', gap: 'var(--spacing-sm)', marginTop: 'var(--spacing-md)' }}>
         {!promoting ? (

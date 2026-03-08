@@ -431,3 +431,61 @@
     justify-content: center;
   }
 }
+
+/* === Fitness Scores === */
+.fitness-scores {
+  margin-top: var(--spacing-sm);
+  border-top: 1px solid var(--color-border);
+  padding-top: var(--spacing-sm);
+}
+
+.fitness-label {
+  font-size: 0.6875rem;
+  color: var(--color-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+
+.fitness-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 2px;
+}
+
+.fitness-name {
+  font-size: 0.6875rem;
+  color: var(--color-muted);
+  width: 54px;
+  flex-shrink: 0;
+}
+
+.fitness-bar {
+  flex: 1;
+  height: 4px;
+  background: var(--color-dim);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.fitness-fill {
+  height: 100%;
+  background: var(--color-accent);
+  border-radius: 2px;
+  transition: width 0.3s;
+}
+
+.fitness-value {
+  font-size: 0.6875rem;
+  color: var(--color-text);
+  width: 32px;
+  text-align: right;
+}
+
+.fitness-total {
+  font-size: 0.75rem;
+  color: var(--color-accent);
+  text-align: right;
+  margin-top: 4px;
+}

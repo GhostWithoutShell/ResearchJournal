@@ -1,12 +1,35 @@
 import { atom } from 'nanostores';
-import type { LabOffspring } from '../lib/schemas';
+import type { LabOffspring, Idea, Connection } from '../lib/schemas';
 import { addDraft } from './ideas';
-import type { Idea } from '../lib/schemas';
 import { computeFitness } from '../lib/genetics';
 
 export const $labOffspring = atom<LabOffspring[]>([]);
 
 const LAB_KEY = 'research-journal-lab';
+const CONNECTIONS_KEY = 'research-journal-connections';
+
+/**
+ * Load draft connections from localStorage.
+ */
+export function loadConnections(): Connection[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const stored = localStorage.getItem(CONNECTIONS_KEY);
+    return stored ? JSON.parse(stored) : [];
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Save a single connection to localStorage.
+ */
+function saveConnection(conn: Connection): void {
+  if (typeof window === 'undefined') return;
+  const connections = loadConnections();
+  connections.push(conn);
+  localStorage.setItem(CONNECTIONS_KEY, JSON.stringify(connections));
+}
 
 /**
  * Load lab offspring from localStorage.
@@ -92,6 +115,23 @@ export function promoteToLibrary(
   };
 
   addDraft(idea);
+
+  // Create child-of connections to both parents
+  saveConnection({
+    id: `conn-${Date.now()}-${Math.random().toString(36).slice(2, 6)}-a`,
+    sourceId: idea.id,
+    targetId: offspring.parentA,
+    label: 'child-of',
+    createdAt: now,
+  });
+  saveConnection({
+    id: `conn-${Date.now()}-${Math.random().toString(36).slice(2, 6)}-b`,
+    sourceId: idea.id,
+    targetId: offspring.parentB,
+    label: 'child-of',
+    createdAt: now,
+  });
+
   removeOffspring(offspring.id);
 }
 

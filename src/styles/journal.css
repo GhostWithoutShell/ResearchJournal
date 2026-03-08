@@ -641,3 +641,97 @@
   color: var(--color-accent);
   flex-shrink: 0;
 }
+
+/* === Lineage Tree === */
+.lineage-tree {
+  border-left: 1px solid var(--color-dim);
+  padding-left: var(--spacing-sm);
+}
+
+.lineage-node {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: 2px 0;
+}
+
+.lineage-node-title {
+  font-size: 0.6875rem;
+  color: var(--color-ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 140px;
+}
+
+.lineage-node-gen {
+  font-size: 0.5625rem;
+  color: var(--color-muted);
+  flex-shrink: 0;
+}
+
+.lineage-node--leaf .lineage-node-title {
+  color: var(--color-muted);
+  font-style: italic;
+}
+
+.lineage-node--unknown .lineage-node-title {
+  color: var(--color-muted);
+  font-size: 0.625rem;
+  opacity: 0.5;
+}
+
+.lineage-weights {
+  display: flex;
+  gap: 2px;
+  margin: 2px 0 4px var(--spacing-lg);
+}
+
+.lineage-weight-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+}
+
+.lineage-weight-label {
+  font-size: 0.5rem;
+  color: var(--color-muted);
+  text-transform: uppercase;
+}
+
+.lineage-weight-bar {
+  display: flex;
+  width: 20px;
+  height: 3px;
+  border-radius: 1px;
+  overflow: hidden;
+}
+
+.lineage-weight-fill-a {
+  height: 100%;
+  background: var(--color-accent);
+  opacity: 0.7;
+}
+
+.lineage-weight-fill-b {
+  height: 100%;
+  background: #33cc33;
+  opacity: 0.7;
+}
+
+.lineage-parents {
+  margin-left: var(--spacing-sm);
+}
+
+.lineage-branch {
+  margin-bottom: var(--spacing-xs);
+}
+
+.lineage-branch-label {
+  font-size: 0.5625rem;
+  color: var(--color-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 1px;
+}

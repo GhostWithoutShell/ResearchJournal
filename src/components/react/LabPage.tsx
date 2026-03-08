@@ -8,6 +8,7 @@ import { loadVocabulary, decodeConcepts, generateOffspringText } from '../../lib
 import type { ConceptEntry } from '../../lib/schemas';
 import LabParentSelector from './LabParentSelector';
 import LabOffspringCard from './LabOffspringCard';
+import LabTournament from './LabTournament';
 
 const BLOCK_LABELS = ['Palette', 'Shapes', 'Pattern', 'Composition', 'Rhythm', 'Details'];
 
@@ -27,6 +28,7 @@ export default function LabPage({ ideas, vocabulary }: Props) {
   const [count, setCount] = useState(4);
   const [breeding, setBreeding] = useState(false);
   const [sortMode, setSortMode] = useState<'newest' | 'fitness'>('newest');
+  const [tournamentMode, setTournamentMode] = useState(false);
 
   useEffect(() => {
     initializeStore(ideas);
@@ -260,6 +262,23 @@ export default function LabPage({ ideas, vocabulary }: Props) {
                   fitness
                 </button>
               </div>
+              {offspring.length >= 2 && (
+                <button
+                  style={{
+                    padding: '2px 8px',
+                    fontSize: '0.6875rem',
+                    fontFamily: 'inherit',
+                    border: '1px solid var(--color-border)',
+                    borderRadius: 'var(--radius)',
+                    cursor: 'pointer',
+                    background: tournamentMode ? 'var(--color-ink)' : 'transparent',
+                    color: tournamentMode ? 'var(--color-bg)' : 'var(--color-muted)',
+                  }}
+                  onClick={() => setTournamentMode(!tournamentMode)}
+                >
+                  tournament
+                </button>
+              )}
             </div>
             <button
               className="btn btn--sm btn--ghost"
@@ -274,16 +293,24 @@ export default function LabPage({ ideas, vocabulary }: Props) {
             </button>
           </div>
 
-          <div className="idea-grid">
-            {(sortMode === 'fitness' ? sortOffspringByFitness() : offspring.slice().reverse()).map((o) => (
-              <LabOffspringCard
-                key={o.id}
-                offspring={o}
-                parentA={ideasMap[o.parentA]}
-                parentB={ideasMap[o.parentB]}
-              />
-            ))}
-          </div>
+          {tournamentMode ? (
+            <LabTournament
+              offspring={offspring}
+              ideasMap={ideasMap}
+              onExit={() => setTournamentMode(false)}
+            />
+          ) : (
+            <div className="idea-grid">
+              {(sortMode === 'fitness' ? sortOffspringByFitness() : offspring.slice().reverse()).map((o) => (
+                <LabOffspringCard
+                  key={o.id}
+                  offspring={o}
+                  parentA={ideasMap[o.parentA]}
+                  parentB={ideasMap[o.parentB]}
+                />
+              ))}
+            </div>
+          )}
         </div>
       )}
 

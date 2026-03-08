@@ -307,6 +307,8 @@ export default function LabPage({ ideas, vocabulary }: Props) {
                   offspring={o}
                   parentA={ideasMap[o.parentA]}
                   parentB={ideasMap[o.parentB]}
+                  allOffspring={offspring}
+                  ideasMap={ideasMap}
                 />
               ))}
             </div>

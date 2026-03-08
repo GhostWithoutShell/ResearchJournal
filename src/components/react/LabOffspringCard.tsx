@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { LabOffspring, Idea } from '../../lib/schemas';
 import { removeOffspring, promoteToLibrary } from '../../stores/lab';
 import DnaFingerprint from './DnaFingerprint';
+import LabLineageTree from './LabLineageTree';
 
 const BLOCK_LABELS = ['Palette', 'Shapes', 'Pattern', 'Composition', 'Rhythm', 'Details'];
 
@@ -9,13 +10,16 @@ interface Props {
   offspring: LabOffspring;
   parentA?: Idea;
   parentB?: Idea;
+  allOffspring: LabOffspring[];
+  ideasMap: Record<string, Idea>;
 }
 
-export default function LabOffspringCard({ offspring, parentA, parentB }: Props) {
+export default function LabOffspringCard({ offspring, parentA, parentB, allOffspring, ideasMap }: Props) {
   const [promoting, setPromoting] = useState(false);
   const [title, setTitle] = useState(offspring.suggestedTitle || '');
   const [description, setDescription] = useState(offspring.suggestedDescription || '');
   const [nextAction, setNextAction] = useState('');
+  const [showLineage, setShowLineage] = useState(false);
 
   const handlePromote = () => {
     if (!title.trim() || !nextAction.trim()) return;
@@ -101,6 +105,28 @@ export default function LabOffspringCard({ offspring, parentA, parentB }: Props)
           </div>
         )}
       </div>
+
+      {/* Lineage tree toggle */}
+      {offspring.generation > 1 && (
+        <div style={{ marginTop: 'var(--spacing-xs)' }}>
+          <button
+            className="btn btn--sm btn--ghost"
+            style={{ fontSize: '0.625rem', padding: '1px 6px' }}
+            onClick={() => setShowLineage(!showLineage)}
+          >
+            {showLineage ? 'hide lineage' : 'show lineage'}
+          </button>
+          {showLineage && (
+            <div style={{ marginTop: 'var(--spacing-sm)' }}>
+              <LabLineageTree
+                offspring={offspring}
+                ideasMap={ideasMap}
+                allOffspring={allOffspring}
+              />
+            </div>
+          )}
+        </div>
+      )}
 
       {offspring.fitness && (
         <div className="fitness-scores">

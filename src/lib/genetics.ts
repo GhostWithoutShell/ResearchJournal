@@ -4,6 +4,8 @@
  * All operations work on 384-dim embedding vectors (6 blocks x 64 dims).
  */
 
+import { cosineSimilarity } from './similarity';
+
 const DIMS = 384;
 const BLOCKS = 6;
 const BLOCK_SIZE = 64; // DIMS / BLOCKS
@@ -110,4 +112,43 @@ export function generateOffspring(
   }
 
   return results;
+}
+
+/**
+ * Score an offspring embedding on novelty, balance, and coverage.
+ * Returns scores between 0 and 1, plus a weighted total.
+ */
+export function computeFitness(
+  offspringEmbedding: number[],
+  parentA: number[],
+  parentB: number[],
+  existingEmbeddings: number[][],
+  decodedConcepts: string[],
+): { novelty: number; balance: number; coverage: number; total: number } {
+  // Novelty: average distance to all existing ideas (1 - cosine_similarity).
+  // If no existing ideas, novelty is 1 (maximally novel).
+  let novelty = 1;
+  if (existingEmbeddings.length > 0) {
+    let totalDist = 0;
+    for (const existing of existingEmbeddings) {
+      totalDist += 1 - cosineSimilarity(offspringEmbedding, existing);
+    }
+    novelty = totalDist / existingEmbeddings.length;
+  }
+
+  // Balance: how evenly the offspring inherits from both parents.
+  const simA = cosineSimilarity(offspringEmbedding, parentA);
+  const simB = cosineSimilarity(offspringEmbedding, parentB);
+  const balance = 1 - Math.abs(simA - simB);
+
+  // Coverage: diversity of decoded concepts. unique / total.
+  let coverage = 0;
+  if (decodedConcepts.length > 0) {
+    const uniqueCount = new Set(decodedConcepts).size;
+    coverage = uniqueCount / decodedConcepts.length;
+  }
+
+  const total = novelty * 0.4 + balance * 0.3 + coverage * 0.3;
+
+  return { novelty, balance, coverage, total };
 }

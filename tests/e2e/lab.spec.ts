@@ -42,10 +42,10 @@ test('Lab page accepts parentA and parentB URL params', async ({ page }) => {
   await page.goto('/lab?parentA=idea-2026-03-05-rec-audit&parentB=idea-2026-03-05-kan-ambient');
   await expect(page.locator('h1.page-title')).toHaveText('Genetics Lab');
   // Crossover controls should be visible since both parents are pre-selected
-  await expect(page.getByText('crossover weights', { exact: false })).toBeVisible({ timeout: 10000 });
+  await expect(page.locator('.form-label', { hasText: 'crossover weights' })).toBeVisible({ timeout: 10000 });
 });
 
 test('Breed button appears when two parents are selected via URL params', async ({ page }) => {
   await page.goto('/lab?parentA=idea-2026-03-05-rec-audit&parentB=idea-2026-03-05-kan-ambient');
-  await expect(page.getByText('breed', { exact: false })).toBeVisible({ timeout: 10000 });
+  await expect(page.locator('button.btn--primary', { hasText: 'breed' })).toBeVisible({ timeout: 10000 });
 });

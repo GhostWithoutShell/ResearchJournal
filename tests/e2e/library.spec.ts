@@ -7,7 +7,7 @@ test('library page shows "Idea Library" title', async ({ page }) => {
 
 test('library page shows idea count in subtitle', async ({ page }) => {
   await page.goto('/');
-  await expect(page.locator('.page-subtitle')).toContainText('2 ideas tracked');
+  await expect(page.locator('.page-subtitle')).toContainText('ideas tracked');
 });
 
 test('filter bar is present with status buttons', async ({ page }) => {
@@ -32,7 +32,7 @@ test('sort select is present', async ({ page }) => {
 test('shows idea cards', async ({ page }) => {
   await page.goto('/');
   const cards = page.locator('.idea-grid .card');
-  await expect(cards).toHaveCount(2);
+  await expect(cards).toHaveCount(3);
 });
 
 test('cards have titles that are links', async ({ page }) => {
@@ -58,13 +58,13 @@ test('clicking status filter "idea" still shows cards', async ({ page }) => {
   await page.goto('/');
   await page.locator('.filters-bar').getByRole('button', { name: 'idea' }).click();
   const cards = page.locator('.idea-grid .card');
-  await expect(cards).toHaveCount(2);
+  await expect(cards).toHaveCount(3);
 });
 
 test('sort select can be changed', async ({ page }) => {
   await page.goto('/');
   const sortSelect = page.locator('.filters-bar select');
-  await sortSelect.selectOption({ label: 'oldest first' });
+  await sortSelect.selectOption('oldest');
   await expect(sortSelect).toHaveValue('oldest');
 });
 

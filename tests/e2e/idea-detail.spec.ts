@@ -78,7 +78,7 @@ test.describe('Idea Detail Page', () => {
     await expect(title).toBeVisible();
     await expect(title).toHaveText(secondIdea.title);
 
-    const badge = page.locator('.badge');
+    const badge = page.locator('.badge').first();
     await expect(badge).toBeVisible();
     await expect(badge).toHaveText(secondIdea.status);
 

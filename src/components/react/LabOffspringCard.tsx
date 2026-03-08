@@ -51,7 +51,13 @@ export default function LabOffspringCard({ offspring, parentA, parentB, allOffsp
           </div>
         </div>
         <div className="card-dna">
-          <DnaFingerprint embedding={offspring.embedding} size={48} />
+          <DnaFingerprint
+            embedding={offspring.embedding}
+            size={48}
+            crossoverWeights={offspring.crossoverWeights}
+            parentAEmbedding={parentA?.embedding}
+            parentBEmbedding={parentB?.embedding}
+          />
         </div>
       </div>
 

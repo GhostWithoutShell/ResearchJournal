@@ -175,3 +175,35 @@ export function sortOffspringByFitness(): LabOffspring[] {
     return bScore - aScore;
   });
 }
+
+/**
+ * Increment tournament wins for an offspring by 1.
+ */
+export function incrementTournamentWins(id: string): void {
+  const current = $labOffspring.get();
+  $labOffspring.set(
+    current.map((o) =>
+      o.id === id ? { ...o, tournamentWins: (o.tournamentWins ?? 0) + 1 } : o
+    )
+  );
+  saveLab();
+}
+
+/**
+ * Reset all tournament wins to 0.
+ */
+export function resetTournament(): void {
+  const current = $labOffspring.get();
+  $labOffspring.set(current.map((o) => ({ ...o, tournamentWins: 0 })));
+  saveLab();
+}
+
+/**
+ * Return offspring sorted by tournament wins descending.
+ */
+export function sortOffspringByTournamentWins(): LabOffspring[] {
+  const offspring = $labOffspring.get();
+  return [...offspring].sort((a, b) => {
+    return (b.tournamentWins ?? 0) - (a.tournamentWins ?? 0);
+  });
+}

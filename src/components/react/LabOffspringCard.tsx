@@ -113,7 +113,7 @@ export default function LabOffspringCard({ offspring, parentA, parentB, allOffsp
       </div>
 
       {/* Lineage tree toggle */}
-      {offspring.generation > 1 && (
+      {(parentA || parentB) && (
         <div style={{ marginTop: 'var(--spacing-xs)' }}>
           <button
             className="btn btn--sm btn--ghost"

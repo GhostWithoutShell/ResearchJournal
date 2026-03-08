@@ -249,3 +249,57 @@ export function renderDnaFingerprint(
 
   ctx.shadowBlur = 0;
 }
+
+/**
+ * Render a colored overlay showing which parent contributed each DNA block.
+ * Animates as a wave from left to right.
+ */
+export function renderInheritanceOverlay(
+  canvas: HTMLCanvasElement,
+  size: number,
+  weights: number[],
+  progress: number,
+): void {
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+
+  ctx.clearRect(0, 0, size, size);
+
+  const blocks = 6;
+  const blockWidth = size / blocks;
+
+  const colorA = { r: 255, g: 170, b: 0 };
+  const colorB = { r: 0, g: 170, b: 255 };
+
+  for (let i = 0; i < blocks; i++) {
+    const blockCenter = (i + 0.5) / blocks;
+    const wavePos = progress;
+    const dist = Math.abs(blockCenter - wavePos);
+    const intensity = Math.max(0, 1 - dist * 3);
+
+    if (intensity <= 0) continue;
+
+    const w = weights[i];
+    let color: { r: number; g: number; b: number };
+    let alpha: number;
+
+    if (w < 0.4) {
+      color = colorA;
+      alpha = intensity * 0.35;
+    } else if (w > 0.6) {
+      color = colorB;
+      alpha = intensity * 0.35;
+    } else {
+      const pulse = (Math.sin(progress * Math.PI * 4) + 1) / 2;
+      color = {
+        r: Math.round(colorA.r * (1 - pulse) + colorB.r * pulse),
+        g: Math.round(colorA.g * (1 - pulse) + colorB.g * pulse),
+        b: Math.round(colorA.b * (1 - pulse) + colorB.b * pulse),
+      };
+      alpha = intensity * 0.25;
+    }
+
+    ctx.fillStyle = `rgba(${color.r},${color.g},${color.b},${alpha})`;
+    ctx.fillRect(i * blockWidth, 0, blockWidth, size);
+  }
+}

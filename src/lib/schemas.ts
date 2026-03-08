@@ -64,7 +64,7 @@ export type LabOffspring = z.infer<typeof LabOffspringSchema>;
 export const ConceptEntrySchema = z.object({
   term: z.string(),
   embedding: z.array(z.number()).length(384),
-  source: z.enum(['ideas', 'dictionary']),
+  source: z.enum(['ideas', 'dictionary', 'web']),
 });
 
 export type ConceptEntry = z.infer<typeof ConceptEntrySchema>;

@@ -20,3 +20,8 @@ test('SVG element is rendered inside graph container', async ({ page }) => {
   const svg = page.locator('.graph-container svg');
   await expect(svg).toBeVisible({ timeout: 10000 });
 });
+
+test('graph page has breed mode button', async ({ page }) => {
+  await page.goto('/graph');
+  await expect(page.getByText('breed mode', { exact: false })).toBeVisible({ timeout: 10000 });
+});

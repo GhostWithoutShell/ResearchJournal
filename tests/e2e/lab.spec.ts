@@ -49,3 +49,28 @@ test('Breed button appears when two parents are selected via URL params', async 
   await page.goto('/lab?parentA=idea-2026-03-05-rec-audit&parentB=idea-2026-03-05-kan-ambient');
   await expect(page.locator('button.btn--primary', { hasText: 'breed' })).toBeVisible({ timeout: 10000 });
 });
+
+test('Tournament button appears when offspring exist', async ({ page }) => {
+  await page.goto('/lab?parentA=idea-2026-03-05-rec-audit&parentB=idea-2026-03-05-kan-ambient');
+  // Breed offspring first
+  const breedBtn = page.locator('button.btn--primary', { hasText: 'breed' });
+  await breedBtn.waitFor({ timeout: 10000 });
+  await breedBtn.click();
+  // Wait for offspring to appear
+  await expect(page.locator('.idea-grid .card').first()).toBeVisible({ timeout: 15000 });
+  // Tournament button should appear
+  await expect(page.getByText('tournament', { exact: true })).toBeVisible();
+});
+
+test('Tournament mode shows matchup view', async ({ page }) => {
+  await page.goto('/lab?parentA=idea-2026-03-05-rec-audit&parentB=idea-2026-03-05-kan-ambient');
+  const breedBtn = page.locator('button.btn--primary', { hasText: 'breed' });
+  await breedBtn.waitFor({ timeout: 10000 });
+  await breedBtn.click();
+  await expect(page.locator('.idea-grid .card').first()).toBeVisible({ timeout: 15000 });
+  // Enter tournament mode
+  await page.getByText('tournament', { exact: true }).click();
+  // Should see tournament UI
+  await expect(page.locator('.tournament-container')).toBeVisible({ timeout: 5000 });
+  await expect(page.locator('.tournament-vs')).toBeVisible();
+});

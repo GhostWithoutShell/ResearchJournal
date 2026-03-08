@@ -144,7 +144,7 @@ export function computeFitness(
   // Coverage: diversity of decoded concepts. unique / total.
   let coverage = 0;
   if (decodedConcepts.length > 0) {
-    const uniqueCount = new Set(decodedConcepts).size;
+    const uniqueCount = new Set(decodedConcepts.map(c => c.toLowerCase())).size;
     coverage = uniqueCount / decodedConcepts.length;
   }
 

@@ -64,11 +64,16 @@ function findSemanticAnchor(
 ): number[]
 ```
 
-Returns the mean embedding of the top-K nearest vocabulary entries.
+Returns the mean embedding of the top-K nearest vocabulary entries. If vocabulary has fewer than `topK` entries, uses all available entries.
+
+### Propagation
+
+`generateOffspring()` also needs an optional `vocabulary` in its options, passed through to `mutate()`. The caller in `LabPage.tsx` passes the loaded vocabulary.
 
 ### Files
 
-- **Modify:** `src/lib/genetics.ts` — update `mutate()`, add `findSemanticAnchor()`
+- **Modify:** `src/lib/genetics.ts` — update `mutate()`, `generateOffspring()`, add `findSemanticAnchor()`
+- **Modify:** `src/components/react/LabPage.tsx` — pass vocabulary to `generateOffspring()`
 
 ## Solution 2: Adaptive Top-K Decoding with Score Gap Detection
 
@@ -80,11 +85,13 @@ Instead of returning a fixed number of concepts, detect where relevance scores d
 
 1. Compute cosine similarity for all vocabulary entries (unchanged)
 2. Sort descending, take top `maxK` (default 12) as candidate pool
-3. Compute gaps: `gap[i] = score[i] - score[i+1]`
-4. Compute `meanGap` across all gaps in the pool
-5. Scan from position 3 onward (minimum 3 concepts always returned)
-6. If `gap[i] > meanGap * gapMultiplier` (default 1.5), cut at position `i+1`
-7. Return concepts up to the cut point
+3. If pool has fewer than `minK` entries, return all
+4. Compute gaps: `gap[i] = score[i] - score[i+1]`
+5. Compute `meanGap` across all gaps in the pool
+6. Scan from position `minK - 1` onward (minimum `minK` concepts always returned)
+7. If `gap[i] > meanGap * gapMultiplier` (default 1.5), cut at position `i+1`
+8. If no gap exceeds threshold, return all `maxK` candidates (scores are uniformly relevant)
+9. Return concepts up to the cut point
 
 ### API Change
 
@@ -102,16 +109,17 @@ export function decodeConcepts(
 ): string[]
 ```
 
-Old call sites using `decodeConcepts(emb, vocab, 8)` need updating to use the options object. There is one call site in `src/stores/lab.ts`.
+The call site in `LabPage.tsx` currently calls `decodeConcepts(emb, vocab)` without a third argument, so it will pick up the new defaults automatically.
 
 ### Files
 
 - **Modify:** `src/lib/concept-vocabulary.ts` — rewrite `decodeConcepts()`
-- **Modify:** `src/stores/lab.ts` — update `decodeConcepts()` call site
 
 ## Scope
 
 - No new dependencies
 - No UI changes
-- Both changes are backward-compatible at runtime
+- `mutate()` is backward-compatible (vocabulary is optional, defaults to pure noise)
+- `decodeConcepts()` third parameter changes from `number` to `options object`; the only call site already omits it, so no breakage
+- `generateOffspring()` gets optional `vocabulary` in options; callers without it behave as before
 - Vocabulary (557 terms) is sufficient for anchoring; novelty search deferred until 3k+

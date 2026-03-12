@@ -180,6 +180,7 @@ export function generateOffspring(
     baseWeights?: number[];
     mutationStrength?: number;
     weightVariation?: number;
+    vocabulary?: ConceptEntry[];
   } = {},
 ): { embedding: number[]; crossoverWeights: number[]; mutationStrength: number }[] {
   const {
@@ -187,6 +188,7 @@ export function generateOffspring(
     baseWeights = [0.5, 0.5, 0.5, 0.5, 0.5, 0.5],
     mutationStrength = 0.05,
     weightVariation = 0.15,
+    vocabulary,
   } = options;
 
   const results = [];
@@ -197,7 +199,7 @@ export function generateOffspring(
     );
 
     const blended = crossover(parentA, parentB, weights);
-    const mutated = mutate(blended, mutationStrength);
+    const mutated = mutate(blended, mutationStrength, vocabulary);
 
     results.push({
       embedding: mutated,

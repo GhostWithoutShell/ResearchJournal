@@ -25,19 +25,57 @@ export function loadVocabulary(preloaded?: ConceptEntry[]): ConceptEntry[] {
 /**
  * Decode an embedding vector to the top-K closest concepts from the vocabulary.
  */
+/**
+ * Decode an embedding vector to the closest concepts from the vocabulary.
+ * Uses adaptive score-gap detection: returns top concepts until a significant
+ * drop in cosine similarity is detected, rather than a fixed count.
+ */
 export function decodeConcepts(
   embedding: number[],
   vocabulary: ConceptEntry[],
-  topK: number = 8,
+  options?: {
+    maxK?: number;
+    minK?: number;
+    gapMultiplier?: number;
+  },
 ): string[] {
-  return vocabulary
+  const maxK = options?.maxK ?? 12;
+  const minK = options?.minK ?? 3;
+  const gapMultiplier = options?.gapMultiplier ?? 1.5;
+
+  const scored = vocabulary
     .map((entry) => ({
       term: entry.term,
       score: cosineSimilarity(embedding, entry.embedding),
     }))
     .sort((a, b) => b.score - a.score)
-    .slice(0, topK)
-    .map((r) => r.term);
+    .slice(0, maxK);
+
+  // If pool is smaller than minK, return all
+  if (scored.length <= minK) {
+    return scored.map((r) => r.term);
+  }
+
+  // Compute gaps between consecutive scores
+  const gaps: number[] = [];
+  for (let i = 0; i < scored.length - 1; i++) {
+    gaps.push(scored[i].score - scored[i + 1].score);
+  }
+
+  // Mean gap as baseline
+  const meanGap = gaps.reduce((sum, g) => sum + g, 0) / gaps.length;
+  const threshold = meanGap * gapMultiplier;
+
+  // Scan from minK onward — find first significant gap
+  let cutAt = scored.length;
+  for (let i = minK - 1; i < gaps.length; i++) {
+    if (gaps[i] > threshold) {
+      cutAt = i + 1;
+      break;
+    }
+  }
+
+  return scored.slice(0, cutAt).map((r) => r.term);
 }
 
 /**

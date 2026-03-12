@@ -871,3 +871,78 @@
   border-radius: 50%;
   display: inline-block;
 }
+
+/* === Genetic Origin (Detail Page) === */
+.genetic-origin-parents {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-md);
+}
+
+.genetic-origin-parent {
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.genetic-origin-parent a:hover {
+  opacity: 0.8;
+}
+
+.genetic-origin-parent-label {
+  font-size: 0.625rem;
+  color: var(--color-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+
+.genetic-origin-parent-title {
+  font-size: 0.6875rem;
+  color: var(--color-ink);
+  margin-top: 4px;
+  max-width: 80px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.genetic-origin-weights {
+  flex: 1;
+  padding-top: var(--spacing-sm);
+}
+
+.genetic-origin-weight-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 3px;
+}
+
+.genetic-origin-weight-label {
+  font-size: 0.625rem;
+  color: var(--color-muted);
+  width: 72px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.genetic-origin-weight-bar {
+  flex: 1;
+  height: 6px;
+  background: var(--color-dim);
+  border-radius: 3px;
+  overflow: hidden;
+  display: flex;
+}
+
+.genetic-origin-weight-fill-a {
+  height: 100%;
+  background: var(--color-accent);
+  opacity: 0.6;
+}
+
+.genetic-origin-weight-fill-b {
+  height: 100%;
+  background: #33cc33;
+  opacity: 0.6;
+}

@@ -5,6 +5,7 @@
  */
 
 import { cosineSimilarity } from './similarity';
+import type { ConceptEntry } from './schemas';
 
 const DIMS = 384;
 const BLOCKS = 6;
@@ -71,6 +72,39 @@ function gaussianRandom(): number {
   const u1 = Math.random();
   const u2 = Math.random();
   return Math.sqrt(-2 * Math.log(u1 || 1e-10)) * Math.cos(2 * Math.PI * u2);
+}
+
+/**
+ * Find the semantic anchor — mean embedding of the top-K nearest vocabulary entries.
+ * Used to bias mutation toward meaningful regions of the embedding space.
+ */
+function findSemanticAnchor(
+  embedding: number[],
+  vocabulary: ConceptEntry[],
+  topK: number = 3,
+): number[] {
+  const k = Math.min(topK, vocabulary.length);
+  if (k === 0) return embedding.slice();
+
+  const scored = vocabulary.map((entry) => ({
+    embedding: entry.embedding,
+    score: cosineSimilarity(embedding, entry.embedding),
+  }));
+  scored.sort((a, b) => b.score - a.score);
+  const topEntries = scored.slice(0, k);
+
+  // Mean of top-K embeddings
+  const anchor = new Array(embedding.length).fill(0);
+  for (const entry of topEntries) {
+    for (let i = 0; i < embedding.length; i++) {
+      anchor[i] += entry.embedding[i];
+    }
+  }
+  for (let i = 0; i < embedding.length; i++) {
+    anchor[i] /= k;
+  }
+
+  return anchor;
 }
 
 /**

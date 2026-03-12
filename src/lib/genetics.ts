@@ -57,11 +57,72 @@ export function crossover(
  * Apply gaussian mutation to an embedding vector.
  * strength controls the standard deviation of the noise (0.01 - 0.3 recommended).
  */
-export function mutate(embedding: number[], strength: number): number[] {
+/**
+ * Apply mutation to an embedding vector.
+ * When vocabulary is provided, mutation is biased toward semantic anchors.
+ * Anchor strength adapts: weak mutation = strong anchoring, strong mutation = more randomness.
+ * Without vocabulary, falls back to pure gaussian noise (original behavior).
+ */
+export function mutate(
+  embedding: number[],
+  strength: number,
+  vocabulary?: ConceptEntry[],
+): number[] {
+  if (!vocabulary || vocabulary.length === 0) {
+    // Fallback: pure gaussian noise (original behavior)
+    const mutated = new Array(embedding.length);
+    for (let i = 0; i < embedding.length; i++) {
+      mutated[i] = embedding[i] + gaussianRandom() * strength;
+    }
+    return l2Normalize(mutated);
+  }
+
+  // Adaptive anchoring: weaker mutation = stronger anchor pull
+  const anchorStrength = 1 - strength;
+
+  // Semantic direction: toward the mean of top-3 nearest concepts
+  const anchor = findSemanticAnchor(embedding, vocabulary);
+  const semanticDir = new Array(embedding.length);
+  let semanticNorm = 0;
+  for (let i = 0; i < embedding.length; i++) {
+    semanticDir[i] = anchor[i] - embedding[i];
+    semanticNorm += semanticDir[i] * semanticDir[i];
+  }
+  semanticNorm = Math.sqrt(semanticNorm) || 1;
+  for (let i = 0; i < embedding.length; i++) {
+    semanticDir[i] /= semanticNorm;
+  }
+
+  // Random direction: gaussian noise normalized
+  const randomDir = new Array(embedding.length);
+  let randomNorm = 0;
+  for (let i = 0; i < embedding.length; i++) {
+    randomDir[i] = gaussianRandom();
+    randomNorm += randomDir[i] * randomDir[i];
+  }
+  randomNorm = Math.sqrt(randomNorm) || 1;
+  for (let i = 0; i < embedding.length; i++) {
+    randomDir[i] /= randomNorm;
+  }
+
+  // Blend semantic and random directions
+  const blended = new Array(embedding.length);
+  let blendedNorm = 0;
+  for (let i = 0; i < embedding.length; i++) {
+    blended[i] = anchorStrength * semanticDir[i] + (1 - anchorStrength) * randomDir[i];
+    blendedNorm += blended[i] * blended[i];
+  }
+  blendedNorm = Math.sqrt(blendedNorm) || 1;
+  for (let i = 0; i < embedding.length; i++) {
+    blended[i] /= blendedNorm;
+  }
+
+  // Apply mutation
   const mutated = new Array(embedding.length);
   for (let i = 0; i < embedding.length; i++) {
-    mutated[i] = embedding[i] + gaussianRandom() * strength;
+    mutated[i] = embedding[i] + strength * blended[i];
   }
+
   return l2Normalize(mutated);
 }
 

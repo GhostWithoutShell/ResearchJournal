@@ -1,5 +1,7 @@
 # Algorithm Improvements Implementation Plan
 
+> **STATUS:** Anchoring (Tasks 1-3) was implemented and then **reverted on 2026-03-12**. Task 4 (adaptive top-K) remains active. Task 5 passed. See `improvement-plans.md` for current direction.
+
 > **For agentic workers:** REQUIRED: Use superpowers:subagent-driven-development (if subagents available) or superpowers:executing-plans to implement this plan. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Improve mutation and decoding algorithms in the genetics system — anchored mutation for meaningful evolution and adaptive top-K decoding to eliminate noise.

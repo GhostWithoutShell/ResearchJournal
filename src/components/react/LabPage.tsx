@@ -68,7 +68,6 @@ export default function LabPage({ ideas, vocabulary }: Props) {
         count,
         baseWeights: weights,
         mutationStrength,
-        vocabulary: vocab,
       });
 
       const now = new Date().toISOString();

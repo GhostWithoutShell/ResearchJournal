@@ -1,5 +1,7 @@
 # Algorithm Improvements: Adaptive Mutation Anchoring & Adaptive Top-K Decoding
 
+> **STATUS:** Anchoring was implemented and then **reverted on 2026-03-12** — it collapsed all 4 offspring to the same point. Top-K decoding remains active. See `improvement-plans.md` for current direction.
+
 ## Problem
 
 Two algorithmic weaknesses in the genetics system:

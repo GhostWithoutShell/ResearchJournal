@@ -112,6 +112,13 @@ export function promoteToLibrary(
     createdAt: now,
     updatedAt: now,
     embedding: offspring.embedding,
+    geneticOrigin: {
+      parentA: offspring.parentA,
+      parentB: offspring.parentB,
+      crossoverWeights: offspring.crossoverWeights,
+      mutationStrength: offspring.mutationStrength,
+      generation: offspring.generation,
+    },
   };
 
   addDraft(idea);

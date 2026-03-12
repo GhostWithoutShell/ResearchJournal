@@ -737,3 +737,137 @@
   letter-spacing: 0.05em;
   margin-bottom: 1px;
 }
+
+/* === Latent Space === */
+.latent-space-container {
+  margin-top: var(--spacing-lg);
+}
+
+.latent-controls {
+  display: flex;
+  gap: var(--spacing-lg);
+  align-items: center;
+  flex-wrap: wrap;
+  padding: var(--spacing-md);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  background: var(--color-surface);
+  margin-bottom: var(--spacing-md);
+}
+
+.control-group {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.control-label {
+  font-size: 0.75rem;
+  color: var(--color-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.toggle-group {
+  display: flex;
+  gap: 2px;
+}
+
+.toggle-btn {
+  background: var(--color-dim);
+  border: 1px solid var(--color-border);
+  color: var(--color-muted);
+  padding: 4px 12px;
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.toggle-btn:hover {
+  color: var(--color-text);
+}
+
+.toggle-btn.active {
+  background: var(--color-muted);
+  color: var(--color-bg);
+  border-color: var(--color-muted);
+}
+
+.latent-map {
+  position: relative;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  background: var(--color-bg);
+  overflow: hidden;
+}
+
+.latent-svg {
+  display: block;
+  width: 100%;
+}
+
+.latent-loading {
+  text-align: center;
+  padding: var(--spacing-xl);
+  color: var(--color-muted);
+}
+
+.loading-text {
+  animation: blink 1s step-end infinite;
+}
+
+.latent-error {
+  color: #cc3333;
+  padding: var(--spacing-md);
+  border: 1px solid #cc3333;
+  border-radius: 4px;
+  margin-bottom: var(--spacing-md);
+}
+
+.latent-empty {
+  text-align: center;
+  padding: var(--spacing-2xl);
+  color: var(--color-muted);
+}
+
+.latent-empty-hint {
+  font-size: 0.8125rem;
+  margin-top: var(--spacing-sm);
+  opacity: 0.6;
+}
+
+.latent-tooltip {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  padding: 6px 10px;
+  font-size: 0.8125rem;
+  color: var(--color-text);
+  border-radius: 4px;
+  z-index: 100;
+  max-width: 200px;
+  pointer-events: none;
+}
+
+.latent-legend {
+  display: flex;
+  gap: var(--spacing-md);
+  justify-content: center;
+  padding: var(--spacing-md);
+  margin-top: var(--spacing-sm);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  color: var(--color-muted);
+}
+
+.legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}

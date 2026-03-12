@@ -28,3 +28,4 @@ test-results/
 
 # Logs
 npm-debug.log*
+.worktrees/

@@ -1,0 +1,25 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import LatentSpace from '../components/react/LatentSpace';
+import ideasData from '../data/ideas.json';
+
+// Pass full embeddings — needed for projection
+const ideas = ideasData.map((idea: any) => ({
+  id: idea.id,
+  title: idea.title,
+  status: idea.status,
+  tags: idea.tags,
+  createdAt: idea.createdAt,
+  embedding: idea.embedding,
+}));
+---
+<BaseLayout title="Latent Space — Research Journal">
+  <div class="page-header">
+    <h1 class="page-title">Latent Space</h1>
+    <p class="page-subtitle">2D projection of idea embeddings. Semantic clusters appear as galaxies.</p>
+  </div>
+  <LatentSpace
+    client:only="react"
+    ideas={ideas}
+  />
+</BaseLayout>

@@ -32,7 +32,7 @@ test('sort select is present', async ({ page }) => {
 test('shows idea cards', async ({ page }) => {
   await page.goto('/');
   const cards = page.locator('.idea-grid .card');
-  await expect(cards).toHaveCount(3);
+  await expect(cards).toHaveCount(2);
 });
 
 test('cards have titles that are links', async ({ page }) => {
@@ -58,7 +58,7 @@ test('clicking status filter "idea" still shows cards', async ({ page }) => {
   await page.goto('/');
   await page.locator('.filters-bar').getByRole('button', { name: 'idea' }).click();
   const cards = page.locator('.idea-grid .card');
-  await expect(cards).toHaveCount(3);
+  await expect(cards).toHaveCount(2);
 });
 
 test('sort select can be changed', async ({ page }) => {

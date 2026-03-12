@@ -14,6 +14,13 @@ export const IdeaSchema = z.object({
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
   embedding: z.array(z.number()).length(384),
+  geneticOrigin: z.object({
+    parentA: z.string(),
+    parentB: z.string(),
+    crossoverWeights: z.array(z.number()).length(6),
+    mutationStrength: z.number(),
+    generation: z.number(),
+  }).optional(),
 });
 
 export type Idea = z.infer<typeof IdeaSchema>;

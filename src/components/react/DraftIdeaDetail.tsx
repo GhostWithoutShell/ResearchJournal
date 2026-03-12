@@ -63,7 +63,13 @@ export default function DraftIdeaDetail({ ideaId: propId, buildTimeIdeas }: Prop
 
       <div className="idea-detail-header">
         <div className="idea-detail-dna">
-          <DnaFingerprint embedding={idea.embedding} size={400} />
+          <DnaFingerprint
+            embedding={idea.embedding}
+            size={400}
+            crossoverWeights={idea.geneticOrigin?.crossoverWeights}
+            parentAEmbedding={allIdeas.find(i => i.id === idea.geneticOrigin?.parentA)?.embedding}
+            parentBEmbedding={allIdeas.find(i => i.id === idea.geneticOrigin?.parentB)?.embedding}
+          />
         </div>
         <div className="idea-detail-info">
           <h1 className="idea-detail-title">{idea.title}</h1>
@@ -108,6 +114,14 @@ export default function DraftIdeaDetail({ ideaId: propId, buildTimeIdeas }: Prop
         </div>
       )}
 
+      {idea.geneticOrigin && (
+        <GeneticOriginSection
+          geneticOrigin={idea.geneticOrigin}
+          ideaEmbedding={idea.embedding}
+          allIdeas={allIdeas}
+        />
+      )}
+
       {draft && (
         <div style={{ marginTop: 'var(--spacing-xl)', paddingTop: 'var(--spacing-lg)', borderTop: '1px solid var(--color-border)' }}>
           <button className="btn btn--sm btn--ghost" onClick={handleDelete} style={{ color: 'var(--color-muted)' }}>
@@ -121,6 +135,80 @@ export default function DraftIdeaDetail({ ideaId: propId, buildTimeIdeas }: Prop
           &lt; back to library
         </a>
       </div>
+    </div>
+  );
+}
+
+const BLOCK_LABELS = ['Palette', 'Shapes', 'Pattern', 'Composition', 'Rhythm', 'Details'];
+
+function GeneticOriginSection({
+  geneticOrigin,
+  ideaEmbedding,
+  allIdeas,
+}: {
+  geneticOrigin: NonNullable<Idea['geneticOrigin']>;
+  ideaEmbedding: number[];
+  allIdeas: Idea[];
+}) {
+  const parentA = allIdeas.find(i => i.id === geneticOrigin.parentA);
+  const parentB = allIdeas.find(i => i.id === geneticOrigin.parentB);
+
+  return (
+    <div className="idea-detail-section">
+      <h3>Genetic Origin</h3>
+      <p style={{ fontSize: '0.75rem', color: 'var(--color-muted)', marginBottom: 'var(--spacing-md)' }}>
+        Generation {geneticOrigin.generation} &middot; mutation {(geneticOrigin.mutationStrength * 100).toFixed(0)}%
+      </p>
+
+      <div className="genetic-origin-parents">
+        <ParentCard label="Parent A" idea={parentA} parentId={geneticOrigin.parentA} />
+
+        <div className="genetic-origin-weights">
+          {BLOCK_LABELS.map((label, i) => {
+            const w = geneticOrigin.crossoverWeights[i];
+            const pctA = ((1 - w) * 100).toFixed(0);
+            return (
+              <div key={label} className="genetic-origin-weight-row">
+                <span className="genetic-origin-weight-label">{label}</span>
+                <div className="genetic-origin-weight-bar">
+                  <div className="genetic-origin-weight-fill-a" style={{ width: `${pctA}%` }} />
+                  <div className="genetic-origin-weight-fill-b" style={{ flex: 1 }} />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <ParentCard label="Parent B" idea={parentB} parentId={geneticOrigin.parentB} />
+      </div>
+    </div>
+  );
+}
+
+function ParentCard({
+  label,
+  idea,
+  parentId,
+}: {
+  label: string;
+  idea?: Idea;
+  parentId: string;
+}) {
+  const href = idea ? (isDraft(idea.id) ? `/draft?id=${idea.id}` : `/idea/${idea.id}`) : undefined;
+
+  return (
+    <div className="genetic-origin-parent">
+      <div className="genetic-origin-parent-label">{label}</div>
+      {idea ? (
+        <a href={href} style={{ textDecoration: 'none', color: 'inherit' }}>
+          <DnaFingerprint embedding={idea.embedding} size={48} />
+          <div className="genetic-origin-parent-title">{idea.title}</div>
+        </a>
+      ) : (
+        <div className="genetic-origin-parent-title" style={{ opacity: 0.5 }}>
+          {parentId}
+        </div>
+      )}
     </div>
   );
 }

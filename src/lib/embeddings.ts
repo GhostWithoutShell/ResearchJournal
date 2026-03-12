@@ -21,7 +21,7 @@ async function getEmbeddingPipeline() {
       );
       pipeline = await createPipeline(
         'feature-extraction',
-        'Xenova/all-MiniLM-L6-v2',
+        'Xenova/paraphrase-multilingual-MiniLM-L12-v2',
       );
       return pipeline;
     } catch (e) {

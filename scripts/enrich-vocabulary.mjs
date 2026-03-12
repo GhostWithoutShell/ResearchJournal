@@ -163,7 +163,7 @@ function extractTerms(texts) {
   for (const text of texts) {
     const words = text
       .toLowerCase()
-      .replace(/[^a-z0-9\s-]/g, ' ')
+      .replace(/[^a-zа-яёa-z0-9\s-]/g, ' ')
       .split(/\s+/)
       .filter((w) => w.length >= 2);
 
@@ -280,8 +280,8 @@ async function main() {
   }
 
   // Compute embeddings
-  console.log('\nLoading model (Xenova/all-MiniLM-L6-v2)...');
-  const extractor = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2');
+  console.log('\nLoading model (Xenova/paraphrase-multilingual-MiniLM-L12-v2)...');
+  const extractor = await pipeline('feature-extraction', 'Xenova/paraphrase-multilingual-MiniLM-L12-v2');
 
   const newEntries = [];
   const batchSize = 32;

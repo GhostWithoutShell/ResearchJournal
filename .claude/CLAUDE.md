@@ -10,7 +10,7 @@ The core problem: too many ideas generated, too few finished. This tool helps fi
 
 - **Frontend:** Astro + React
 - **Storage:** JSON files in the repo (no backend)
-- **Embeddings:** Transformers.js (all-MiniLM-L6-v2, 384 dims) — runs in browser
+- **Embeddings:** Transformers.js (paraphrase-multilingual-MiniLM-L12-v2, 384 dims) — runs in browser, supports multilingual (EN/RU)
 - **Graph:** d3-force for idea connections visualization
 - **State:** nanostores + @nanostores/react
 

@@ -2,7 +2,11 @@
   "permissions": {
     "allow": [
       "Bash(npm install:*)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(git:*)",
+      "Bash(grep:*)",
+      "Bash(npm run:*)",
+      "Bash(cd D:/MyFiles/Projects/ResearchJournal/.worktrees/latent-space && npx playwright test tests/e2e/latent-space.spec.ts 2>&1)"
     ]
   }
 }

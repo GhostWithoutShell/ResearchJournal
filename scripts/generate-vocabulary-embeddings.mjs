@@ -1,5 +1,5 @@
 /**
- * Pre-compute embeddings for the concept vocabulary using all-MiniLM-L6-v2.
+ * Pre-compute embeddings for the concept vocabulary using paraphrase-multilingual-MiniLM-L12-v2.
  * Also extracts terms from existing ideas.
  *
  * Usage: node scripts/generate-vocabulary-embeddings.mjs
@@ -14,44 +14,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const ideasPath = join(__dirname, '..', 'src', 'data', 'ideas.json');
 const outputPath = join(__dirname, '..', 'src', 'data', 'vocabulary.json');
 
-// Same dictionary as in concept-vocabulary.ts
-const DICTIONARY_TERMS = [
-  // AI & ML
-  'neural network', 'machine learning', 'deep learning', 'transformer', 'attention mechanism',
-  'reinforcement learning', 'generative model', 'embedding', 'classifier', 'clustering',
-  'computer vision', 'natural language processing', 'speech recognition', 'recommendation system',
-  'anomaly detection', 'transfer learning', 'few-shot learning', 'diffusion model',
-  'knowledge graph', 'semantic search',
-  // Math & Science
-  'optimization', 'probability', 'statistics', 'linear algebra', 'calculus',
-  'differential equations', 'graph theory', 'topology', 'information theory', 'signal processing',
-  'fourier transform', 'wavelet', 'fractal', 'chaos theory', 'complexity',
-  'simulation', 'numerical methods', 'approximation', 'interpolation', 'regression',
-  // Data & Visualization
-  'data visualization', 'interactive chart', 'dashboard', 'real-time data', 'time series',
-  'geospatial data', 'network graph', 'heatmap', 'scatter plot', 'animation',
-  'sonification', 'data pipeline', 'ETL', 'streaming', 'aggregation',
-  // Hardware & Systems
-  'microcontroller', 'sensor', 'IoT', 'edge computing', 'embedded system',
-  'FPGA', 'GPU computing', 'distributed system', 'peer-to-peer', 'protocol',
-  'real-time system', 'low power', 'wireless', 'bluetooth', 'mesh network',
-  // Creative & Art
-  'generative art', 'procedural generation', 'creative coding', 'sound design', 'music synthesis',
-  'visual effects', 'shader', 'particle system', 'parametric design', 'algorithmic composition',
-  'interactive installation', 'augmented reality', 'virtual reality', 'projection mapping',
-  // Research Areas
-  'bioinformatics', 'computational biology', 'neuroscience', 'cognitive science', 'linguistics',
-  'urban computing', 'climate modeling', 'materials science', 'quantum computing', 'cryptography',
-  'robotics', 'autonomous systems', 'human-computer interaction', 'accessibility',
-  // Software & Web
-  'API design', 'microservice', 'serverless', 'WebAssembly', 'progressive web app',
-  'browser extension', 'CLI tool', 'package manager', 'build system', 'testing framework',
-  'database', 'search engine', 'compiler', 'interpreter', 'language design',
-  // Meta & Philosophy
-  'open source', 'collaboration', 'education', 'gamification', 'citizen science',
-  'reproducibility', 'documentation', 'knowledge management', 'personal tools', 'automation',
-  'workflow', 'productivity', 'minimalism', 'privacy', 'decentralization',
-];
+const DICTIONARY_TERMS = JSON.parse(readFileSync(join(__dirname, '..', 'src', 'data', 'dictionary-terms.json'), 'utf-8'));
 
 /**
  * Extract unique terms from ideas (same logic as concept-vocabulary.ts).
@@ -86,8 +49,8 @@ function extractTermsFromIdeas(ideas) {
 }
 
 async function main() {
-  console.log('Loading model (Xenova/all-MiniLM-L6-v2)...');
-  const extractor = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2');
+  console.log('Loading model (Xenova/paraphrase-multilingual-MiniLM-L12-v2)...');
+  const extractor = await pipeline('feature-extraction', 'Xenova/paraphrase-multilingual-MiniLM-L12-v2');
 
   const ideas = JSON.parse(readFileSync(ideasPath, 'utf-8'));
   const ideaTerms = extractTermsFromIdeas(ideas);
